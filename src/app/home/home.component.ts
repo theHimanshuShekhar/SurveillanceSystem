@@ -24,10 +24,10 @@ export class HomeComponent implements OnInit {
   ngOnInit() {
     console.clear();
 
-    this.selected = this.tabs[1];
+    this.selected = this.tabs[2];
 
     this.electron.remote.getCurrentWindow().setTitle(this.electron.remote.getCurrentWindow().getTitle() + ' - Home');
-    // this.electron.remote.getCurrentWindow().webContents.openDevTools();
+    this.electron.remote.getCurrentWindow().webContents.openDevTools();
 
     this.folders = new Array();
     this.getFolders();

@@ -20,6 +20,10 @@
           </div>
           <!-- <app-recordings [folders]="folders"></app-recordings> -->
         </ng-container>
+
+        <ng-container *ngIf="selected === tabs[2]">
+          <app-configuration></app-configuration>
+        </ng-container>
       </div>
     </div>
   </div>
