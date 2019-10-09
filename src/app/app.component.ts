@@ -23,6 +23,8 @@ export class AppComponent {
       console.log('NodeJS childProcess', electronService.childProcess);
 
       this.electronService.remote.getCurrentWindow().setTitle('Surveillance System');
+      this.electron.remote.getCurrentWindow().webContents.closeDevTools();
+      this.electron.remote.getCurrentWindow().setMenuBarVisibility(false);
     } else {
       console.log('Mode web');
     }

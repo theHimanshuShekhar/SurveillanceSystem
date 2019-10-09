@@ -27,8 +27,6 @@ export class HomeComponent implements OnInit {
     this.selected = this.tabs[1];
 
     this.electron.remote.getCurrentWindow().setTitle(this.electron.remote.getCurrentWindow().getTitle() + ' - Home');
-    this.electron.remote.getCurrentWindow().setMenuBarVisibility(false);
-    this.electron.remote.getCurrentWindow().webContents.closeDevTools();
     this.folders = new Array();
     // this.getFolders();
     console.log(this.folders);

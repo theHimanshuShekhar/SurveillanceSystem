@@ -101,11 +101,17 @@ class YoloSystem:
 
         currenttime = time.time()
         time_elapsed = abs(self.lasttime - currenttime)
-        if(time_elapsed > 10):
+        if(time_elapsed > 60):
             new = True
             self.lasttime = currenttime
 
-        currentpath = os.path.join(dirname, 'results/' +
+        currentdate = str(datetime.date.today())
+        print(currentdate)
+
+        if not os.path.exists(dirname + '/results/' + currentdate):
+            os.makedirs('results/' + currentdate)
+
+        currentpath = os.path.join(dirname, 'results/' + currentdate + '/' +
                                    str(currenttime))
 
         if(new or not self.lastpath):
@@ -113,13 +119,12 @@ class YoloSystem:
             self.lastpath = currentpath
 
             currenttime = str(currenttime)
-            os.mkdir('results/' + currenttime)
 
-            if not os.path.exists(dirname + '/results/' + currenttime):
-                os.makedirs('results/' + currenttime)
-            path = os.path.join(dirname, 'results/' +
+            if not os.path.exists(dirname + '/results/' + currentdate + '/' + currenttime):
+                os.makedirs('results/' + currentdate + '/' + currenttime)
+            path = os.path.join(dirname, 'results/' + currentdate + '/' +
                                 currenttime)
-            print(path)
+
             self.lastpath = path
 
         filename = '/' + timestamp + '.jpg'
