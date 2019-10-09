@@ -28,7 +28,7 @@ def show_webcam(mirror=False):
         newimg = system.ImageRecog(img, net)
         # send frame to client using socket.
 
-        cv2.imshow('my webcam', newimg)
+        # cv2.imshow('my webcam', newimg)
         if cv2.waitKey(1) == 27:
             break  # esc to quit
     cv2.destroyAllWindows()

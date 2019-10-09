@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef, NgZone } from '@angular/core';
 import { ElectronService } from '../core/services';
 
 const { join } = require('path');
@@ -19,7 +19,7 @@ export class HomeComponent implements OnInit {
 
   tabs = ['Live View', 'Recordings', 'Configuration'];
 
-  constructor(private electron: ElectronService) { }
+  constructor(private electron: ElectronService, private change: ChangeDetectorRef, private zone: NgZone) { }
 
   ngOnInit() {
     console.clear();
@@ -27,23 +27,26 @@ export class HomeComponent implements OnInit {
     this.selected = this.tabs[1];
 
     this.electron.remote.getCurrentWindow().setTitle(this.electron.remote.getCurrentWindow().getTitle() + ' - Home');
+    // this.electron.remote.getCurrentWindow().webContents.openDevTools();
+
     this.folders = new Array();
-    // this.getFolders();
-    console.log(this.folders);
+    this.getFolders();
   }
 
   getFolders() {
-    this.fs.readdirSync(join(this.appPath, './results')).forEach(file => {
-      console.log(this.fs.statSync(file));
-      // console.log(stats);
-    });
-  }
+    this.change.detectChanges();
+    const path = join(this.appPath, './results');
+    // this.fs.readdir(path, (err, files) => {
+    //   files.forEach(file => {
+    //     this.zone.run(() => {
+    //       this.folders.push(file);
+    //       console.log(this.folders);
+    //     });
+    //   });
+    // });
 
-  async getFolderStat(file) {
-    let filename;
-    this.fs.statSync(file);
-
-    return file;
+    const folders = this.fs.readdirSync(path);
+    this.folders = folders.sort().reverse();
   }
 
   select(tab) {

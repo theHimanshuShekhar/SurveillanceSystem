@@ -12,14 +12,22 @@
         <h1 class="title text-center">
           {{selected}}
         </h1>
-        {{folders}}
-        <ng-template *ngIf="folders.length > 0">
-          <h1>Test</h1>
-          <div class="border" *ngFor="let folder of folders">
-            <h1>Test</h1>
-            {{getFolderStat(folder)}}
+        <ng-container *ngIf="folders && selected === tabs[1]">
+          <div *ngFor="let folder of folders" class="pointer">
+            <h1 class="border px-4 py-2 mb-2 text-white">
+              {{folder}}
+            </h1>
           </div>
-        </ng-template>
+          <!-- <app-recordings [folders]="folders"></app-recordings> -->
+        </ng-container>
+
+        <ng-container *ngIf="selected === tabs[2]">
+          <app-configuration></app-configuration>
+        </ng-container>
+
+        <ng-container *ngIf="selected === tabs[0]">
+          <h1 class="text-white">Not implemented yet</h1>
+        </ng-container>
       </div>
     </div>
   </div>

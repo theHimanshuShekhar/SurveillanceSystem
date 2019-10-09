@@ -1,0 +1,18 @@
+<div>
+    <h2 class="text-white my-2">Select objects that will trigger a recording</h2>
+    <div class="selected">
+        <span *ngFor="let select of selected" class=" text-white mx-1 p-2 my-1 d-inline-block pointer rounded"
+            (click)="deselect(select)">
+            <h4>{{select}}</h4>
+        </span>
+    </div>
+    <div class="labels">
+        <span class="bg-white mx-1 p-2 my-1 d-inline-block pointer rounded" *ngFor="let label of labels"
+            (click)="select(label)">
+            <h5>{{label}}</h5>
+        </span>
+    </div>
+    <div class="btn btn-danger px-4 py-2 float-right mr-4 my-3" (click)="save()">
+        <h4 class="p-0 m-0">Save</h4>
+    </div>
+</div>
