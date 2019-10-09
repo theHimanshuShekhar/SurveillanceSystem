@@ -106,7 +106,7 @@ class YoloSystem:
             self.lasttime = currenttime
 
         currentdate = str(datetime.date.today())
-        print(currentdate)
+        # print(currentdate)
 
         if not os.path.exists(dirname + '/results/' + currentdate):
             os.makedirs('results/' + currentdate)
