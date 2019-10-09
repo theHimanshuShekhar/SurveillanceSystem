@@ -1,0 +1,26 @@
+.home-container {
+  height: 100%;
+  width: 100% !important;
+  display: flex;
+  // align-items: center;
+  justify-content: center;
+
+  // background: url(../../assets/background.jpg) no-repeat center fixed;
+  // -webkit-background-size: cover;
+  // /* pour anciens Chrome et Safari */
+  // background-size: cover;
+  // /* version standardisée */
+
+  background-color: darkslateblue;
+
+  .tab {
+    border: 1px solid white;
+    border-radius: 7px;
+  }
+
+  .title {
+    color: white;
+    margin: 0;
+    padding: 50px 20px;
+  }
+}

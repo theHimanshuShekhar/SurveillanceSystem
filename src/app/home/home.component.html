@@ -1,0 +1,26 @@
+<div class="home-container">
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-3 py-5 px-3">
+        <div class="tab mx-3 my-3 pointer text-center" *ngFor="let tab of tabs" (click)="select(tab)">
+          <h1 class="title">
+            {{ tab }}
+          </h1>
+        </div>
+      </div>
+      <div class="col">
+        <h1 class="title text-center">
+          {{selected}}
+        </h1>
+        {{folders}}
+        <ng-template *ngIf="folders.length > 0">
+          <h1>Test</h1>
+          <div class="border" *ngFor="let folder of folders">
+            <h1>Test</h1>
+            {{getFolderStat(folder)}}
+          </div>
+        </ng-template>
+      </div>
+    </div>
+  </div>
+</div>
