@@ -1,7 +1,8 @@
-.container {
+.home-container {
   height: 100%;
+  width: 100% !important;
   display: flex;
-  align-items: center;
+  // align-items: center;
   justify-content: center;
 
   // background: url(../../assets/background.jpg) no-repeat center fixed;
@@ -11,6 +12,11 @@
   // /* version standardisée */
 
   background-color: darkslateblue;
+
+  .tab {
+    border: 1px solid white;
+    border-radius: 7px;
+  }
 
   .title {
     color: white;
