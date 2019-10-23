@@ -50,7 +50,7 @@ class YoloSystem:
         layerOutputs = net.forward(ln)
         end = time.time()
 
-        print("[INFO] YOLO took {:.6f} seconds".format(end - start))
+        # print("[INFO] YOLO took {:.6f} seconds".format(end - start))
 
         boxes = []
         confidences = []
@@ -62,7 +62,7 @@ class YoloSystem:
                 classID = np.argmax(scores)
                 confidence = scores[classID]
 
-                if confidence > 0.5:
+                if confidence > 0.7:
                     box = detection[0:4] * np.array([W, H, W, H])
                     (centerX, centerY, width, height) = box.astype("int")
                     x = int(centerX - (width / 2))
@@ -83,7 +83,7 @@ class YoloSystem:
                 text = "{}: {:.4f}".format(LABELS[classIDs[i]], confidences[i])
                 cv2.putText(image, text, (x, y - 5), cv2.FONT_HERSHEY_SIMPLEX,
                             0.5, color, 2)
-
+            # print('detected: ' + LABELS[classIDs[i]])
             self.saveResult(image, timestamp, text)
 
         return image
