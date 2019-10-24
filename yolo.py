@@ -5,6 +5,7 @@ import datetime
 import time
 import cv2
 import os
+import json
 
 # ap = argparse.ArgumentParser()
 # ap.add_argument("-i", "--image", required=True,
@@ -46,9 +47,9 @@ class YoloSystem:
         blob = cv2.dnn.blobFromImage(image, 1 / 255.0, (416, 416),
                                      swapRB=True, crop=False)
         net.setInput(blob)
-        start = time.time()
+        # start = time.time()
         layerOutputs = net.forward(ln)
-        end = time.time()
+        # end = time.time()
 
         # print("[INFO] YOLO took {:.6f} seconds".format(end - start))
 
@@ -115,6 +116,8 @@ class YoloSystem:
                                    str(currenttime))
 
         if(new or not self.lastpath):
+            if new:
+                self.addFolder(self.lastpath)
 
             self.lastpath = currentpath
 
@@ -130,3 +133,16 @@ class YoloSystem:
         filename = '/' + timestamp + '.jpg'
 
         cv2.imwrite(self.lastpath + filename, image)
+
+    def addFolder(self, path):
+        print('add completed folder path to config queue' + path)
+        data = {}
+        with open('directory_queue.json', 'r') as config_file:
+            data = json.load(config_file)
+            if 'pending_folders' in data:
+                data['pending_folders'].append(path)
+            else:
+                data['pending_folders'] = [path]
+
+        with open('directory_queue.json', 'wt') as config_file:
+            json.dump(data, config_file)
