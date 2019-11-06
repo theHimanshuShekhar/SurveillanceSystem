@@ -85,9 +85,10 @@ class YoloSystem:
                 cv2.putText(image, text, (x, y - 5), cv2.FONT_HERSHEY_SIMPLEX,
                             0.5, color, 2)
             # print('detected: ' + LABELS[classIDs[i]])
-            self.saveResult(image, timestamp, text)
+            # self.saveResult(image, timestamp, text)
+            return True, timestamp
 
-        return image
+        return False, timestamp
 
     def saveResult(self, image, timestamp, text):
 

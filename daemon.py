@@ -4,10 +4,12 @@ import time
 from queue import Queue
 import os
 import asyncio
-from yolo import YoloSystem
+import yolo
 import json
 import glob
 import numpy as np
+from random import randint
+import math
 # print(cv2.getBuildInformation())
 
 
@@ -15,8 +17,10 @@ class VideoCameraDetection:
 
     def __init__(self):
         self.cam = cv2.VideoCapture(-1)
+        self.fps = 15
+        self.minfps = 24
         self.frame_queue = Queue()
-        self.system = YoloSystem()
+        self.system = yolo.YoloSystem()
 
         print("[INFO] loading YOLO from disk...")
         weightsPath = os.path.sep.join(["yolo-coco", "yolov3.weights"])
@@ -30,18 +34,31 @@ class VideoCameraDetection:
         print('Start Daemon')
         asyncio.run(self.capture())
         asyncio.run(self.processQueue())
-        asyncio.run(self.createVideo())
+        asyncio.run(self.stitchVideo())
 
     async def capture(self):
         print('Start capturing frames from camera')
 
         def captureFrames():
-            frame_queue = self.frame_queue
+
+            framecount = 0
             while True:
+                frame_queue = self.frame_queue
+                # if(not start or (start - time.time()) > 1) {
+                #     frame_queue.qsize
+                # }
                 grabbed, img = self.cam.read()
-                if grabbed and (time.time() - self.start > 5):
-                    print(frame_queue.qsize())
+                if grabbed and self.fps > self.minfps:
                     frame_queue.put(img)
+                    framecount = framecount + 1
+
+                diff = math.floor((time.time() - self.start))
+                if(diff > 0 and (time.time() - self.start > 5)):
+                    self.fps = framecount // math.floor(
+                        (time.time() - self.start)) - 5
+                    calc = time.time()
+                    if(time.time() - calc > 5):
+                        framecount = 0
 
         captureThread = threading.Thread(target=captureFrames)
         captureThread.start()
@@ -49,18 +66,37 @@ class VideoCameraDetection:
     async def processQueue(self):
         print('Start processing frames in queue')
 
+        # def process():
+        #     while True:
+        #         if not self.frame_queue.empty():
+        #             async def yoloOnImage():
+        #                 self.system.ImageRecog(
+        #                     self.frame_queue.get(), self.net)
+        #             asyncio.run(yoloOnImage())
+        #         # await asyncio.sleep(0.0001)
+
         def process():
-            while True:
-                if not self.frame_queue.empty():
-                    async def yoloOnImage():
-                        self.system.ImageRecog(
-                            self.frame_queue.get(), self.net)
-                    asyncio.run(yoloOnImage())
-                # await asyncio.sleep(0.0001)
+            while True and self.fps > self.minfps:
+                buffer_size = 20
+                if self.fps:
+                    buffer_size = self.fps
+                if self.frame_queue.qsize() > buffer_size:
+                    buffer = []
+                    for i in range(buffer_size):
+                        buffer.append(self.frame_queue.get())
+                    detected, timestamp = self.system.ImageRecog(
+                        buffer[randint(0, buffer_size-1)], self.net)
+                    if detected:
+                        self.saveBuffer(buffer, timestamp)
+
         processThread = threading.Thread(target=process)
         processThread.start()
 
-    async def createVideo(self):
+    def saveBuffer(self, buffer, timestamp):
+        for index, frame in enumerate(buffer):
+            self.system.saveResult(frame, timestamp, timestamp + str(index))
+
+    async def stitchVideo(self):
         print('start creating video from dir queue')
 
         def stitch():
@@ -70,7 +106,7 @@ class VideoCameraDetection:
                     data = json.load(queue_file)
                     if 'pending_folders' in data:
                         if len(data['pending_folders']) > 0:
-                            createVideo(data['pending_folders'][0])
+                            self.createVideo(data['pending_folders'][0])
                             data['pending_folders'].pop(0)
 
                 with open('directory_queue.json', 'wt') as queue_file:
@@ -82,23 +118,23 @@ class VideoCameraDetection:
         stitchThread = threading.Thread(target=stitch)
         stitchThread.start()
 
+    def createVideo(self, path):
 
-def createVideo(path):
-    img_array = []
-    size = (10, 10)
-    for filename in glob.glob(path + '/*.jpg'):
-        img = cv2.imread(filename)
-        height, width, layers = img.shape
-        size = (width, height)
-        img_array.append(img)
+        img_array = []
+        size = (10, 10)
+        for filename in glob.glob(path + '/*.jpg'):
+            img = cv2.imread(filename)
+            height, width, layers = img.shape
+            size = (width, height)
+            img_array.append(img)
 
-    out = cv2.VideoWriter(
-        path + '.avi', cv2.VideoWriter_fourcc(*'DIVX'), 11, size)
+        out = cv2.VideoWriter(
+            path + '.avi', cv2.VideoWriter_fourcc(*'DIVX'), self.fps, size)
 
-    for i in range(len(img_array)):
-        out.write(img_array[i])
-    out.release()
-    print('video created at ' + path)
+        for i in range(len(img_array)):
+            out.write(img_array[i])
+        out.release()
+        print('video created at ' + path)
 
 
 VideoCameraDetection()
