@@ -84,7 +84,7 @@ class YoloSystem:
                 text = "{}: {:.4f}".format(LABELS[classIDs[i]], confidences[i])
                 cv2.putText(image, text, (x, y - 5), cv2.FONT_HERSHEY_SIMPLEX,
                             0.5, color, 2)
-            # print('detected: ' + LABELS[classIDs[i]])
+            print('detected: ' + text)
             # self.saveResult(image, timestamp, text)
             return True, timestamp
 
@@ -106,9 +106,10 @@ class YoloSystem:
         if(time_elapsed > 60):
             new = True
             self.lasttime = currenttime
+        else:
+            self.lasttime = time.time()
 
         currentdate = str(datetime.date.today())
-        # print(currentdate)
 
         if not os.path.exists(dirname + '/results/' + currentdate):
             os.makedirs('results/' + currentdate)

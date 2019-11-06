@@ -18,7 +18,7 @@ class VideoCameraDetection:
     def __init__(self):
         self.cam = cv2.VideoCapture(-1)
         self.fps = 15
-        self.minfps = 24
+        self.minfps = 20
         self.frame_queue = Queue()
         self.system = yolo.YoloSystem()
 
@@ -40,25 +40,18 @@ class VideoCameraDetection:
         print('Start capturing frames from camera')
 
         def captureFrames():
-
             framecount = 0
             while True:
-                frame_queue = self.frame_queue
-                # if(not start or (start - time.time()) > 1) {
-                #     frame_queue.qsize
-                # }
                 grabbed, img = self.cam.read()
                 if grabbed and self.fps > self.minfps:
-                    frame_queue.put(img)
-                    framecount = framecount + 1
+                    self.frame_queue.put(img)
 
                 diff = math.floor((time.time() - self.start))
-                if(diff > 0 and (time.time() - self.start > 5)):
+                if(diff > 5):
+                    if grabbed:
+                        framecount = framecount + 1
                     self.fps = framecount // math.floor(
-                        (time.time() - self.start)) - 5
-                    calc = time.time()
-                    if(time.time() - calc > 5):
-                        framecount = 0
+                        (time.time() - self.start))
 
         captureThread = threading.Thread(target=captureFrames)
         captureThread.start()
@@ -66,20 +59,11 @@ class VideoCameraDetection:
     async def processQueue(self):
         print('Start processing frames in queue')
 
-        # def process():
-        #     while True:
-        #         if not self.frame_queue.empty():
-        #             async def yoloOnImage():
-        #                 self.system.ImageRecog(
-        #                     self.frame_queue.get(), self.net)
-        #             asyncio.run(yoloOnImage())
-        #         # await asyncio.sleep(0.0001)
-
         def process():
-            while True and self.fps > self.minfps:
-                buffer_size = 20
-                if self.fps:
-                    buffer_size = self.fps
+            while True:
+                buffer_size = self.minfps
+                if self.fps > self.minfps:
+                    buffer_size = self.fps + 10
                 if self.frame_queue.qsize() > buffer_size:
                     buffer = []
                     for i in range(buffer_size):
@@ -101,6 +85,7 @@ class VideoCameraDetection:
 
         def stitch():
             while True:
+                print(self.fps)
                 data = {}
                 with open('directory_queue.json', 'r+') as queue_file:
                     data = json.load(queue_file)
@@ -129,7 +114,7 @@ class VideoCameraDetection:
             img_array.append(img)
 
         out = cv2.VideoWriter(
-            path + '.avi', cv2.VideoWriter_fourcc(*'DIVX'), self.fps, size)
+            path + '.avi', cv2.VideoWriter_fourcc(*'DIVX'), 8, size)
 
         for i in range(len(img_array)):
             out.write(img_array[i])
