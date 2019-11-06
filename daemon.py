@@ -17,8 +17,8 @@ class VideoCameraDetection:
 
     def __init__(self):
         self.cam = cv2.VideoCapture(-1)
-        self.fps = 15
-        self.minfps = 20
+        self.fps = 15.0
+        self.minfps = 20.0
         self.frame_queue = Queue()
         self.system = yolo.YoloSystem()
 
@@ -41,6 +41,7 @@ class VideoCameraDetection:
 
         def captureFrames():
             framecount = 0
+            lasttime = time.time()
             while True:
                 grabbed, img = self.cam.read()
                 if grabbed and self.fps > self.minfps:
@@ -48,10 +49,17 @@ class VideoCameraDetection:
 
                 diff = math.floor((time.time() - self.start))
                 if(diff > 5):
-                    if grabbed:
-                        framecount = framecount + 1
-                    self.fps = framecount // math.floor(
-                        (time.time() - self.start))
+                    self.fps = self.cam.get(cv2.CAP_PROP_FPS)
+                #     if grabbed:
+                #         framecount = framecount + 1
+                #     if time.time() - lasttime > 1:
+                #         self.fps = framecount // math.floor(
+                #             (time.time() - lasttime))
+                #         # print(self.fps)
+
+                # if((time.time() - lasttime) > 5):
+                #     framecount = 0
+                #     lasttime = time.time()
 
         captureThread = threading.Thread(target=captureFrames)
         captureThread.start()
@@ -63,7 +71,7 @@ class VideoCameraDetection:
             while True:
                 buffer_size = self.minfps
                 if self.fps > self.minfps:
-                    buffer_size = self.fps + 10
+                    buffer_size = int(self.fps)
                 if self.frame_queue.qsize() > buffer_size:
                     buffer = []
                     for i in range(buffer_size):
@@ -78,7 +86,8 @@ class VideoCameraDetection:
 
     def saveBuffer(self, buffer, timestamp):
         for index, frame in enumerate(buffer):
-            self.system.saveResult(frame, timestamp, timestamp + str(index))
+            self.system.saveResult(
+                frame, timestamp, timestamp + str(index), self.fps)
 
     async def stitchVideo(self):
         print('start creating video from dir queue')
@@ -91,8 +100,8 @@ class VideoCameraDetection:
                     data = json.load(queue_file)
                     if 'pending_folders' in data:
                         if len(data['pending_folders']) > 0:
-                            self.createVideo(data['pending_folders'][0])
-                            data['pending_folders'].pop(0)
+                            self.createVideo(data['pending_folders'].pop(
+                                0), data['pending_folders'].pop(0))
 
                 with open('directory_queue.json', 'wt') as queue_file:
                     json.dump(data, queue_file)
@@ -103,7 +112,7 @@ class VideoCameraDetection:
         stitchThread = threading.Thread(target=stitch)
         stitchThread.start()
 
-    def createVideo(self, path):
+    def createVideo(self, path, fps):
 
         img_array = []
         size = (10, 10)
@@ -114,12 +123,12 @@ class VideoCameraDetection:
             img_array.append(img)
 
         out = cv2.VideoWriter(
-            path + '.avi', cv2.VideoWriter_fourcc(*'DIVX'), 8, size)
+            path + '.avi', cv2.VideoWriter_fourcc(*'DIVX'), fps, size)
 
         for i in range(len(img_array)):
             out.write(img_array[i])
         out.release()
-        print('video created at ' + path)
+        print('video created at ' + path, fps)
 
 
 VideoCameraDetection()
