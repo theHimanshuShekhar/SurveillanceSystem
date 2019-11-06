@@ -90,7 +90,7 @@ class YoloSystem:
 
         return False, timestamp
 
-    def saveResult(self, image, timestamp, text, fps):
+    def saveResult(self, image, timestamp, text):
 
         dirname = os.path.dirname(__file__)
 
@@ -119,7 +119,7 @@ class YoloSystem:
 
         if(new or not self.lastpath):
             if new:
-                self.addFolder(self.lastpath, fps)
+                self.addFolder(self.lastpath)
 
             self.lastpath = currentpath
 
@@ -136,16 +136,15 @@ class YoloSystem:
 
         cv2.imwrite(self.lastpath + filename, image)
 
-    def addFolder(self, path, fps):
+    def addFolder(self, path):
         print('add completed folder path to config queue' + path)
         data = {}
         with open('directory_queue.json', 'r') as config_file:
             data = json.load(config_file)
             if 'pending_folders' in data:
                 data['pending_folders'].append(path)
-                data['pending_folders'].append(fps)
             else:
-                data['pending_folders'] = [path, fps]
+                data['pending_folders'] = [path]
 
         with open('directory_queue.json', 'wt') as config_file:
             json.dump(data, config_file)
