@@ -92,9 +92,9 @@ class VideoCameraDetection:
                         self.saveBuffer(
                             batch["frames"], timestamp, batch["fps"])
 
-                        batch = self.batch_queue.get()
-                        self.saveBuffer(
-                            batch["frames"], timestamp, batch["fps"])
+                        # batch = self.batch_queue.get()
+                        # self.saveBuffer(
+                        #     batch["frames"], timestamp, batch["fps"])
 
         processThread = threading.Thread(target=process)
         processThread.start()

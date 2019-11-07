@@ -128,7 +128,6 @@ class YoloSystem:
 
         if(new or not self.lastpath):
             if new:
-                print(self.lastpath, fps)
                 self.addFolder(self.lastpath, fps)
 
             self.lastpath = currentpath
