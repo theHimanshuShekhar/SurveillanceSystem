@@ -28,6 +28,13 @@ class YoloSystem:
         self.lasttime = None
         self.lastpath = None
 
+    def getSelectedLabels(self):
+        labels = []
+        with open('config.json', 'r+') as config_file:
+            data = json.load(config_file)
+            labels = data["selected_labels"]
+        return labels
+
     def ImageRecog(self, image, net):
 
         timestamp = datetime.datetime.now().isoformat()
@@ -76,21 +83,23 @@ class YoloSystem:
                                 0.3)
 
         if len(idxs) > 0:
+            detected_labels = []
             for i in idxs.flatten():
                 (x, y) = (boxes[i][0], boxes[i][1])
                 (w, h) = (boxes[i][2], boxes[i][3])
                 color = [int(c) for c in COLORS[classIDs[i]]]
                 cv2.rectangle(image, (x, y), (x + w, y + h), color, 2)
-                text = "{}: {:.4f}".format(LABELS[classIDs[i]], confidences[i])
+                text = "{}: {:.4f}".format(
+                    LABELS[classIDs[i]], (confidences[i] * 100))
                 cv2.putText(image, text, (x, y - 5), cv2.FONT_HERSHEY_SIMPLEX,
                             0.5, color, 2)
-            print('detected: ' + text)
-            # self.saveResult(image, timestamp, text)
-            return True, timestamp
+                detected_labels.append(LABELS[classIDs[i]])
+                if len(list(set(detected_labels) & set(self.getSelectedLabels()))) > 0:
+                    return True, timestamp, text
 
-        return False, timestamp
+        return False, timestamp, ""
 
-    def saveResult(self, image, timestamp, text):
+    def saveResult(self, image, timestamp, text, fps):
 
         dirname = os.path.dirname(__file__)
 
@@ -119,7 +128,7 @@ class YoloSystem:
 
         if(new or not self.lastpath):
             if new:
-                self.addFolder(self.lastpath)
+                self.addFolder(self.lastpath, fps)
 
             self.lastpath = currentpath
 
@@ -132,9 +141,9 @@ class YoloSystem:
 
             self.lastpath = path
 
-        filename = '/' + timestamp + '.jpg'
+        filename = '/' + text + '.jpg'
 
-        cv2.imwrite(self.lastpath + filename, image)
+        return cv2.imwrite(self.lastpath + filename, image)
 
     def addFolder(self, path):
         print('add completed folder path to config queue' + path)
@@ -143,8 +152,9 @@ class YoloSystem:
             data = json.load(config_file)
             if 'pending_folders' in data:
                 data['pending_folders'].append(path)
+                data['pending_folders'].append(fps)
             else:
-                data['pending_folders'] = [path]
+                data['pending_folders'] = [path, fps]
 
         with open('directory_queue.json', 'wt') as config_file:
             json.dump(data, config_file)
