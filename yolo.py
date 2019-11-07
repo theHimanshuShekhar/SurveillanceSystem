@@ -128,6 +128,7 @@ class YoloSystem:
 
         if(new or not self.lastpath):
             if new:
+                print(self.lastpath, fps)
                 self.addFolder(self.lastpath, fps)
 
             self.lastpath = currentpath
@@ -145,7 +146,7 @@ class YoloSystem:
 
         return cv2.imwrite(self.lastpath + filename, image)
 
-    def addFolder(self, path):
+    def addFolder(self, path, fps):
         print('add completed folder path to config queue' + path)
         data = {}
         with open('directory_queue.json', 'r') as config_file:

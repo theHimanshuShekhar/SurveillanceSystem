@@ -44,7 +44,7 @@ class VideoCameraDetection:
 
         def captureFrames():
             framecount = 0
-            interval = 1
+            interval = 2
             lasttime = time.time()
             frame_arr = []
             while True:
