@@ -94,8 +94,8 @@ class YoloSystem:
                 cv2.putText(image, text, (x, y - 5), cv2.FONT_HERSHEY_SIMPLEX,
                             0.5, color, 2)
                 detected_labels.append(LABELS[classIDs[i]])
-                if len(list(set(detected_labels) & set(self.getSelectedLabels()))) > 0:
-                    return True, timestamp, text
+        if len(list(set(detected_labels) & set(self.getSelectedLabels()))) > 0:
+            return True, timestamp, text
 
         return False, timestamp, ""
 
