@@ -87,14 +87,10 @@ class VideoCameraDetection:
                     detected, timestamp, labels = self.system.ImageRecog(
                         batch["frames"][randint(0, len(batch["frames"])-1)], self.net)
                     if detected:
-                        # print('saving batch: detected', labels, batch["fps"], 'fps from batch',
-                        #       'size', len(batch["frames"]))
+                        print('saving batch: detected', labels, batch["fps"], 'fps from batch',
+                              'size', len(batch["frames"]))
                         self.saveBuffer(
                             batch["frames"], timestamp, batch["fps"])
-
-                        # batch = self.batch_queue.get()
-                        # self.saveBuffer(
-                        #     batch["frames"], timestamp, batch["fps"])
 
         processThread = threading.Thread(target=process)
         processThread.start()
