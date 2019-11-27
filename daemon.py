@@ -25,7 +25,7 @@ class VideoCameraDetection:
         self.batch_queue = Queue()
         self.system = yolo.YoloSystem()
 
-        self.count = 0
+        self.frame = self.cam.read()
 
         print("[INFO] loading YOLO from disk...")
         weightsPath = os.path.sep.join(["yolo-coco", "yolov3.weights"])
@@ -51,9 +51,8 @@ class VideoCameraDetection:
             frame_arr = []
             while True:
                 grabbed, img = self.cam.read()
-
                 if grabbed:
-                    self.write_current(img)
+                    self.frame = img
                     framecount = framecount + 1
                     if self.fps >= self.minfps:
                         frame_arr.append(img)
@@ -80,18 +79,11 @@ class VideoCameraDetection:
         captureThread = threading.Thread(target=captureFrames)
         captureThread.start()
 
-    def write_current(self, image):
-        # limit = 30
-        # if self.count > limit:
-        #     self.count = 0
-        #     # for root, dirs, files in os.walk('./current'):
-        #     #     for name in files:
-        #     #         os.remove(os.path.join(root, name))
-        # else:
-        self.count = self.count + 1
-
-        cv2.imwrite('./current/' + str(self.count) + '.jpg', image)
-        print('wrote current frame', self.count)
+    def getframe(self):
+        image = self.frame
+        ret, jpeg = cv2.imencode('.jpg', image)
+        if ret:
+            return jpeg.tobytes()
 
     async def processQueue(self):
         print('Start processing frames in queue')
@@ -159,7 +151,10 @@ class VideoCameraDetection:
             out.write(img_array[i])
             # cv2.waitKey(1000//self.minfps)
         out.release()
+        for root,dirs,files in os.walk(path):
+            for name in files:
+                os.remove(os.path.join(root,name))
         print('video created at ' + path, 'at', write_fps, 'fps')
 
 
-VideoCameraDetection()
+# VideoCameraDetection()

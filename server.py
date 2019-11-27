@@ -4,14 +4,16 @@ from flask_cors import CORS, cross_origin
 import cv2
 import time
 
-app = Flask(__name__)
+from daemon import VideoCameraDetection
+cam = VideoCameraDetection()
 
+app = Flask(__name__)
 cors = CORS(app, resources={r"/folders": {"origins": "*"}})
 
 
 @app.route('/')
 def hello():
-    return 'Server Online Works!'
+    return 'Server Online!'
 
 
 @app.route('/folders')
@@ -28,24 +30,20 @@ def getResults():
     return results
 
 
-@app.route('/video')
+@app.route('/live')
 def getVideo():
     return Response(gen(), mimetype='multipart/x-mixed-replace; boundary=frame')
 
 
 def gen():
     while True:
-        path = './current/' + os.listdir('./current')[0]
-        image = cv2.imread(path)
-        ret, jpeg = cv2.imencode('.jpg', image)
-        if ret:
-            frame = jpeg.tobytes()
-            # print(len(frame))
-            yield (b'--frame\r\n'
-                   b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n\r\n')
-        os.remove(path)
-        time.sleep(1000//40)
+        frame = cam.getframe()
+        yield (b'--frame\r\n'
+               b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n\r\n')
 
+@app.route('/video')
+def getVideo():
+    return 'Return video from path'
 
 @app.route('/')
 def test():
