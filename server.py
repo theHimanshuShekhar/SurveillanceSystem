@@ -1,9 +1,10 @@
-from flask import Flask, escape, request, Response, jsonify
+from flask import Flask, escape, request, Response, jsonify, send_file, send_from_directory
 import os
 from flask_cors import CORS, cross_origin
 import cv2
 import time
 import json
+import base64
 
 from daemon import VideoCameraDetection
 cam = VideoCameraDetection()
@@ -29,9 +30,24 @@ def getResults():
                     results[folder].append(os.path.join(root, name))
                 else:
                     results[folder] = [os.path.join(root, name)]
-    # response = json.dumps(results)
     response = json.dumps(results)
     return response
+
+
+@app.route('/thumb')
+def getThumb():
+    # path = './results/2019-10-24/1571907539.3689172.avi'
+    # video = cv2.VideoCapture(path)
+    # if video.isOpened:
+    #     frame = video.read()[1]
+    #     cnt = cv2.imencode('.jpg', frame)
+    #     print(type(cnt))
+
+    #     # b64 = base64.encodestring(cnt)
+    #     # # print(b64.tostring())
+    #     # print(type(b64))
+    # video.release()
+    return {'thumb': 'Test'}
 
 
 @app.route('/live')
@@ -48,7 +64,16 @@ def gen():
 
 @app.route('/video')
 def getPathVideo():
-    return 'Return video from path'
+    path = request.args.get('path')
+    vid = cv2.VideoCapture(path)
+    return Response(genVid(path, vid), mimetype='multipart/x-mixed-replace; boundary=frame')
+
+
+def genVid(path, vid):
+    while True:
+        frame = vid.read()
+        yield (b'--frame\r\n'
+               b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n\r\n')
 
 
 @app.route('/')

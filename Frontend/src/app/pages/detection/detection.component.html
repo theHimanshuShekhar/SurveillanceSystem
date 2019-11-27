@@ -1,8 +1,31 @@
-<div class="container-fluid">
-  <div class="folder-container">
-    <div class="folder p-3 my-3 border" *ngFor="let folder of folders">
+<div class="container-fluid" *ngIf="!selected">
+  <div class="folder-container py-4">
+    <h1>Folders</h1>
+    <div class="folder p-3 my-3 border pointer" *ngFor="let folder of folders" (click)="select(folder)">
       <h3 class="d-inline-block">{{folder.name| date}}</h3>
       <h6 class="d-inline-block mx-3">{{folder.videos.length}} detections</h6>
     </div>
+  </div>
+</div>
+
+<div class="container-fluid" *ngIf="selected">
+  <div class="video-container py-4">
+    <h1 class="d-inline-block">Videos</h1>
+    <h6 (click)="deselect()" class="border mx-4 p-2 d-inline-block pointer"> Back</h6>
+    <div class="row">
+      <div class="video col-3 p-2" *ngFor="let video of selected.videos">
+        <div class="border p-4 pointer" (click)="selectVideo(video)">
+          {{video.split('/')[3]}}
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="video-player" *ngIf="selectedVideo">
+    <!-- <video>
+      <source [src]="selectedVideo">
+    </video> -->
+
+    <img src="http://localhost:5000/video?path={{selectedVideo}}">
   </div>
 </div>

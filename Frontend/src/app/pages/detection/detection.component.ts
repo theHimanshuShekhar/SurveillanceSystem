@@ -10,6 +10,9 @@ export class DetectionComponent implements OnInit, OnDestroy {
 
   folders = [];
   resultObs;
+  selected;
+
+  selectedVideo;
 
   constructor(private detectionService: ResultService) { }
 
@@ -26,7 +29,28 @@ export class DetectionComponent implements OnInit, OnDestroy {
       });
   }
 
+  select(folder) {
+    this.selected = folder;
+    this.getThumbs();
+  }
+
   ngOnDestroy() {
+    this.resultObs.unsubscribe();
+  }
+
+  getThumbs() {
+    this.detectionService.getThumb('path').subscribe(resp => console.log(resp));
+  }
+
+  deselect() {
+    this.selected = null;
+  }
+
+  selectVideo(path) {
+    this.selectedVideo = path;
+    this.detectionService.getVideo(path).subscribe(resp => {
+      console.log(resp);
+    });
   }
 
 }
