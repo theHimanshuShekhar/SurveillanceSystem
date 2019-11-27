@@ -10,6 +10,6 @@ export class ResultService {
   }
 
   getResults() {
-    return this.http.get('http://localhost:3000/folders');
+    return this.http.get('http://localhost:5000/folders');
   }
 }

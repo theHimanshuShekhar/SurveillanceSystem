@@ -1,5 +1,6 @@
 # Detection results
 results/*
+current/*
 *.weights
 
 # Byte-compiled / optimized / DLL files
