@@ -1,8 +1,9 @@
-from flask import Flask, escape, request, Response
+from flask import Flask, escape, request, Response, jsonify
 import os
 from flask_cors import CORS, cross_origin
 import cv2
 import time
+import json
 
 from daemon import VideoCameraDetection
 cam = VideoCameraDetection()
@@ -10,6 +11,7 @@ cam = VideoCameraDetection()
 app = Flask(__name__)
 
 cors = CORS(app, resorces={r'/d/*': {"origins": '*'}})
+
 
 @app.route('/')
 def hello():
@@ -27,7 +29,9 @@ def getResults():
                     results[folder].append(os.path.join(root, name))
                 else:
                     results[folder] = [os.path.join(root, name)]
-    return results
+    # response = json.dumps(results)
+    response = json.dumps(results)
+    return response
 
 
 @app.route('/live')

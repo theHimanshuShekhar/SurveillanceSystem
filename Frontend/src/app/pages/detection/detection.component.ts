@@ -8,7 +8,7 @@ import { ResultService } from 'src/app/services/result.service';
 })
 export class DetectionComponent implements OnInit, OnDestroy {
 
-  folders;
+  folders = [];
   resultObs;
 
   constructor(private detectionService: ResultService) { }
@@ -16,9 +16,14 @@ export class DetectionComponent implements OnInit, OnDestroy {
   ngOnInit() {
     this.resultObs = this.detectionService.getResults()
       .subscribe(data => {
-        console.log(data);
-        this.folders = data;
-      }).unsubscribe();
+        Object.keys(data).forEach((key, index) => {
+          this.folders.push({
+            name: key,
+            videos: Object.values(data)[index]
+          });
+        });
+        this.resultObs.unsubscribe();
+      });
   }
 
   ngOnDestroy() {

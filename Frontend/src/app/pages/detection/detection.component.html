@@ -1,7 +1,8 @@
 <div class="container-fluid">
   <div class="folder-container">
-    <div class="folder" *ngFor="let folder of re">
-      <h5></h5>
+    <div class="folder p-3 my-3 border" *ngFor="let folder of folders">
+      <h3 class="d-inline-block">{{folder.name| date}}</h3>
+      <h6 class="d-inline-block mx-3">{{folder.videos.length}} detections</h6>
     </div>
   </div>
 </div>
