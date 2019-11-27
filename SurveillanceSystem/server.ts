@@ -52,20 +52,6 @@ app.get('*', (req, res) => {
   res.render('index', { req });
 });
 
-
-// Frontend Endpoints
-
-
-import * as fs from 'fs';
-
-app.get('/folders', (req, res) => {
-  const results = {};
-  const folders = fs.readdirSync('../results');
-
-  res.send(results);
-});
-
-
 // Start up the Node server
 app.listen(PORT, () => {
   console.log(`Node Express server listening on http://localhost:${PORT}`);
