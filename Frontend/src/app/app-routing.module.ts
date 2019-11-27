@@ -10,7 +10,7 @@ const routes: Routes = [
   { path: 'live', component: LiveComponent },
   { path: 'detections', component: DetectionComponent },
   { path: 'configuration', component: ConfigComponent },
-  { path: '**', redirectTo: '/live' }
+  { path: '**', redirectTo: '/detections' }
 ];
 
 @NgModule({

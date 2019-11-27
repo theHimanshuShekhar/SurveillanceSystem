@@ -12,4 +12,8 @@ export class ResultService {
   getResults() {
     return this.http.get('http://localhost:5000/folders');
   }
+
+  isAlive() {
+    return this.http.get('http://localhost:5000/test');
+  }
 }

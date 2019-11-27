@@ -8,8 +8,8 @@ from daemon import VideoCameraDetection
 cam = VideoCameraDetection()
 
 app = Flask(__name__)
-cors = CORS(app, resources={r"/folders": {"origins": "*"}})
 
+cors = CORS(app, resorces={r'/d/*': {"origins": '*'}})
 
 @app.route('/')
 def hello():
@@ -41,15 +41,22 @@ def gen():
         yield (b'--frame\r\n'
                b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n\r\n')
 
+
 @app.route('/video')
-def getVideo():
+def getPathVideo():
     return 'Return video from path'
 
+
 @app.route('/')
-def test():
+def default():
     return 'Server Online'
+
+
+@app.route('/test')
+def test():
+    return {serverOnline: True}
 
 
 if __name__ == '__main__':
     print('Server Start')
-    app.run()
+    app.run(threaded=True)
