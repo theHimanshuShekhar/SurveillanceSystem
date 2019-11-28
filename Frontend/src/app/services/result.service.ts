@@ -24,4 +24,13 @@ export class ResultService {
   getVideo(path) {
     return this.http.get('http://localhost:5000/video', { params: new HttpParams().set('path', path) });
   }
+
+  getConfig() {
+    return this.http.get('http://localhost:5000/getconfig');
+  }
+
+  saveConfig(config) {
+    console.log(config);
+    return this.http.get('http://localhost:5000/setconfig', { params: new HttpParams().set('json', config.selected_labels) });
+  }
 }

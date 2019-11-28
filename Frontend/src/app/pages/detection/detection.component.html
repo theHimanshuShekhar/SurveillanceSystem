@@ -21,9 +21,11 @@
     </div>
   </div>
 
-  <div class="video-player" *ngIf="selectedVideo && showPlayer">
-    <video id="videoPlayer" controls autoplay>
-      <source src="http://localhost:3000/video?path={{this.selectedVideo}}" type="video/mp4">
-    </video>
-  </div>
+  <ng-container *ngIf="this.selectedVideo">
+    <div class="video-player">
+      <video id="videoPlayer" controls autoplay>
+        <source [src]="this.selectedVideo" type="video/mp4">
+      </video>
+    </div>
+  </ng-container>
 </div>

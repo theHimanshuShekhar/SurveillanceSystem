@@ -82,6 +82,29 @@ def default():
     return 'Server Online'
 
 
+@app.route('/getconfig')
+def getconfig():
+    with open('config.json', 'r+') as config_file:
+        data = json.load(config_file)
+    return data
+
+
+@app.route('/setconfig')
+def setconfig():
+    data = {}
+    selected = request.args.get('json')
+    with open('config.json', 'r+') as config_file:
+        data = json.load(config_file)
+        data["selected_labels"] = []
+        for sel in selected.split(','):
+            data["selected_labels"].append(sel)
+
+    with open('config.json', 'wt') as config_file:
+        json.dump(data, config_file)
+
+    return {'success': True}
+
+
 @app.route('/test')
 def test():
     return {serverOnline: True}

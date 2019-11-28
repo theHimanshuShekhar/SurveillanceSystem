@@ -1,5 +1,7 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { ResultService } from 'src/app/services/result.service';
+import { timeout } from 'q';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-detection',
@@ -15,7 +17,7 @@ export class DetectionComponent implements OnInit, OnDestroy {
 
   selectedVideo;
 
-  constructor(private detectionService: ResultService) { }
+  constructor(private detectionService: ResultService, private router: Router) { }
 
   ngOnInit() {
     this.resultObs = this.detectionService.getResults()
@@ -48,9 +50,6 @@ export class DetectionComponent implements OnInit, OnDestroy {
   }
 
   selectVideo(path) {
-    this.showPlayer = false;
-    this.selectedVideo = path;
-    this.showPlayer = true;
+    this.selectedVideo = 'http://localhost:3000/video?path=' + path;
   }
-
 }
