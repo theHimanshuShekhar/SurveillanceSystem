@@ -1,5 +1,7 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { ResultService } from 'src/app/services/result.service';
+import { timeout } from 'q';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-detection',
@@ -10,8 +12,12 @@ export class DetectionComponent implements OnInit, OnDestroy {
 
   folders = [];
   resultObs;
+  showPlayer = false;
+  selected;
 
-  constructor(private detectionService: ResultService) { }
+  selectedVideo;
+
+  constructor(private detectionService: ResultService, private router: Router) { }
 
   ngOnInit() {
     this.resultObs = this.detectionService.getResults()
@@ -26,7 +32,24 @@ export class DetectionComponent implements OnInit, OnDestroy {
       });
   }
 
-  ngOnDestroy() {
+  select(folder) {
+    this.selected = folder;
+    this.getThumbs();
   }
 
+  ngOnDestroy() {
+    this.resultObs.unsubscribe();
+  }
+
+  getThumbs() {
+    this.detectionService.getThumb('path').subscribe(resp => console.log(resp));
+  }
+
+  deselect() {
+    this.selected = null;
+  }
+
+  selectVideo(path) {
+    this.selectedVideo = 'http://localhost:3000/video?path=' + path;
+  }
 }

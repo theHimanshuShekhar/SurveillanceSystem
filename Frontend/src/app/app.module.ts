@@ -7,13 +7,15 @@ import { AppComponent } from './app.component';
 import { DetectionComponent } from './pages/detection/detection.component';
 import { LiveComponent } from './pages/live/live.component';
 import { ConfigComponent } from './pages/config/config.component';
+import { PlayerComponent } from './player/player.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     DetectionComponent,
     LiveComponent,
-    ConfigComponent
+    ConfigComponent,
+    PlayerComponent
   ],
   imports: [
     BrowserModule.withServerTransition({ appId: 'serverApp' }),
