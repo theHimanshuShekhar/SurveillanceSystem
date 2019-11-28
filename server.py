@@ -24,13 +24,14 @@ def getResults():
     results = {}
     for root, dirs, files in os.walk("./results", topdown=False):
         for name in files:
-            if name.split('.')[-1] == 'avi':
+            if name.split('.')[-1] == 'mp4':
                 folder = root.split('/')[-1]
                 if folder in results:
                     results[folder].append(os.path.join(root, name))
                 else:
                     results[folder] = [os.path.join(root, name)]
     response = json.dumps(results)
+    print('returned folders and videos')
     return response
 
 

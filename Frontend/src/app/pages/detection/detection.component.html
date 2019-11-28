@@ -14,18 +14,16 @@
     <h6 (click)="deselect()" class="border mx-4 p-2 d-inline-block pointer"> Back</h6>
     <div class="row">
       <div class="video col-3 p-2" *ngFor="let video of selected.videos">
-        <div class="border p-4 pointer" (click)="selectVideo(video)">
-          {{video.split('/')[3]}}
+        <div class="border p-4 pointer video-details" (click)="selectVideo(video)">
+          <h6>{{video.split('/')[3]}}</h6>
         </div>
       </div>
     </div>
   </div>
 
-  <div class="video-player" *ngIf="selectedVideo">
-    <!-- <video>
-      <source [src]="selectedVideo">
-    </video> -->
-
-    <img src="http://localhost:5000/video?path={{selectedVideo}}">
+  <div class="video-player" *ngIf="selectedVideo && showPlayer">
+    <video id="videoPlayer" controls autoplay>
+      <source src="http://localhost:3000/video?path={{this.selectedVideo}}" type="video/mp4">
+    </video>
   </div>
 </div>

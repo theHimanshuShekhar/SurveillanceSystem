@@ -10,6 +10,7 @@ export class DetectionComponent implements OnInit, OnDestroy {
 
   folders = [];
   resultObs;
+  showPlayer = false;
   selected;
 
   selectedVideo;
@@ -47,10 +48,9 @@ export class DetectionComponent implements OnInit, OnDestroy {
   }
 
   selectVideo(path) {
+    this.showPlayer = false;
     this.selectedVideo = path;
-    this.detectionService.getVideo(path).subscribe(resp => {
-      console.log(resp);
-    });
+    this.showPlayer = true;
   }
 
 }
